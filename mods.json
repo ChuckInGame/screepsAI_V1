@@ -3,6 +3,7 @@
     "node_modules\\screepsmod-auth\\index.js"
   ],
   "bots": {
-    "simplebot": "node_modules/@screeps/simplebot/src"
+    "simplebot": "node_modules/@screeps/simplebot/src",
+    "@screeps/simplebot": "node_modules\\@screeps\\simplebot\\src"
   }
 }

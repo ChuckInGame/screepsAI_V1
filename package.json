@@ -58,6 +58,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "@screeps/simplebot": "^1.0.1",
     "gl-matrix": "^3.0.0",
     "screeps": "^3.3.0",
     "screepsmod-auth": "^2.4.6",
