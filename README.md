@@ -22,7 +22,28 @@ this code is hosted at [ChuckInGame (github)](https://github.com/ChuckInGame/scr
 <br/>
 <br/>
 -----
+## Usage
+setup screeps server
+> npx screeps init<br/>
 
+configuring password on local server
+> http://localhost:21025/authmod/password/
+> and configure the pw in screeps.json
+
+compile only <br/>
+> rollup -c <br/>
+
+compile und deploy to screeps server<br/>
+> rollup -c --environment DEST:main<br/>
+
+compile and deplay to local server<br/>
+> rollup -c --environment DEST:pserver<br/>
+
+start local server<br/>
+> npx screeps start<br/>
+
+open server CLI<br/>
+> npx screeps cli<br/>
 
 ## Documentation
 - [screeps](https://docs.screeps.com/api/) - the offical screeps documentation
@@ -33,7 +54,7 @@ this code is hosted at [ChuckInGame (github)](https://github.com/ChuckInGame/scr
 
 - [Hauling is (NP-)hard](https://bencbartlett.wordpress.com/2018/03/28/screeps-4-hauling-is-np-hard/) - a site that analyse the problem of hauling
 - [screeps.fandom.com](https://screeps.fandom.com/wiki/Screeps_Wiki) - a site containing some screep infos
-  - [screeps.fandom.com -  movement](https://screeps.fandom.com/wiki/Creep#Movement) - a site that describes the 
+  - [screeps.fandom.com -  movement](https://screeps.fandom.com/wiki/Creep#Movement) - a site that describes the
 calulation of creep movements
   - [screeps.fandom.com - tips](https://screeps.fandom.com/wiki/Tips) - some tips
 - [Adam Laycook - 22 Parts block](https://arcath.net/articles/screeps) - a block of a guy, implemented screeps AI
@@ -59,7 +80,7 @@ calulation of creep movements
 
 - **Issue: Worse creep management** - which creeps are reuqired and the upgrade behavior was bad
   - *Miners - layout* - it's unnessasary to have more worker modules on a miner, then the source will produce -> miners ware expensive and are not better then sheaper versions
-  - *Haulers* sometimes waiting next to the miner because they haul more energie then the miner can produce   
+  - *Haulers* sometimes waiting next to the miner because they haul more energie then the miner can produce
   - *Haulers* sometimes are not able to bring the energie to the targets, because of long pathes
   - *Workers* are there, even if the energie level in the room is low and pulling additional energie out of the room that increases the energie problem
 
@@ -90,7 +111,7 @@ calulation of creep movements
     * Haulers, acting in the near of the spawn and has not so much work to do and now filling up this buffering containers are more efficent
 
 ### Resource management
-A room component should manage the room energie by 
+A room component should manage the room energie by
   - allowing spawning creeps or not
   - allowing towers to do none defending operations or not, to avoid wasting energie for repairing structures
 
@@ -110,7 +131,7 @@ Creeps of this role are responsible to build or rebuild a room, after starting a
 
 #### **Light Defenders**
 
-Simple two or more initial defender creeps, doing spider rep an rage attack. They are fast and protect the room against initial hostils, comming in a room. 
+Simple two or more initial defender creeps, doing spider rep an rage attack. They are fast and protect the room against initial hostils, comming in a room.
 <br />**TODO Spider rep good ???**<br />
 In case of NPC, they should normally be able to handle them, but they give the room time to react on the hostils attack, if they are none NPCs, without loosing to much none military creeps.
 
@@ -136,15 +157,15 @@ if(creeps.tasks.length < 2)
 
 
 ### Spawn management
-In V1 the spawns are coordinated only by a more or less fix creep count per role. Depending on the room, this works more or less well. 
+In V1 the spawns are coordinated only by a more or less fix creep count per role. Depending on the room, this works more or less well.
 Some times there were to much creeps of a role, wasting energie.
 
 The new spawan implementation should work more dynamicly and efficent.
   - the amount of creeps for a role should be spawnd based on calculated factors and the **Resource Management** to avoid wasting energie for too much creeps are there as really needed
   - stop spawn of not really required creeps during **ROOMMODE_WAR**
   - workers should be managed by a worker-group (including a hauler for the workers). Spawning of worker-groups should depend on the **Resource Management**
-    > A worker-group should never reduce a room energy level below a fix threshold 
-    > * to avoid low energie level 
+    > A worker-group should never reduce a room energy level below a fix threshold
+    > * to avoid low energie level
     > * to let the room be able to react on atackers
   - static creeps (like upgraders, miners) should be spawned in time, so that the new creep is on his place, when the old dies.
 
@@ -168,7 +189,7 @@ During these steps, we are able to place defense creeps on all open wholes betwe
 
 ### Improve the strength of defense
 * extend the entry rampPart by one and put a wall right and left to it, so the attackers need to destroy 2 rampParts.
-* the secound one make 2 fields wide, to support 2 defense creeps standing next to each other with RANGE_ATTACK. 
+* the secound one make 2 fields wide, to support 2 defense creeps standing next to each other with RANGE_ATTACK.
 * So,  a defense ATTACK creep can be at the front, and two RANGE_ATTACK behind him. And then the 5 remote healers with RANGE_HEAL, like a pyramid
 
 <br/>

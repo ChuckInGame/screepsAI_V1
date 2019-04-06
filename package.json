@@ -47,7 +47,7 @@
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-nodent": "^0.2.2",
     "rollup-plugin-screeps": "^0.1.2",
-    "rollup-plugin-typescript2": "^0.16.1",
+    "rollup-plugin-typescript2": "^0.20.1",
     "screeps-server-mockup": "^1.4.3",
     "sinon": "^6.3.5",
     "sinon-chai": "^3.2.0",
@@ -58,6 +58,9 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "gl-matrix": "^3.0.0",
+    "screeps": "^3.3.0",
+    "screepsmod-auth": "^2.4.6",
     "source-map": "~0.6.1"
   }
 }
