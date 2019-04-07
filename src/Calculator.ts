@@ -1,10 +1,29 @@
+/// <reference path="../node_modules/@types/screeps/index.d.ts" />
+
+import { openSync } from "fs";
+
+
+
 
 export class Calculator
 {
-
+    private isObstacle: any
     constructor()
     {
+        this.isObstacle = _.transform(
+            OBSTACLE_OBJECT_TYPES,
+            (o, type) => { o[type] = true; },
+            {}
+        );
     }
+
+
+
+    private isEnterable(structureType: string)
+    {
+        return !this.isObstacle[structureType];
+    }
+
 
     public CreepWeight(creep: Creep, full: boolean): number
     {
@@ -29,62 +48,60 @@ export class Calculator
             // so we path next to it.
             return { pos: source.pos, range: 1 };
         });
-
-
     }
 
-    public CalculateTickCost()
+
+    public calculateTickCost(startPosition: RoomPosition, body: BodyPartDefinition[], full: boolean, goals: Array<RoomPosition | { pos: RoomPosition; range: number }>): PathFinderPath
     {
-        let creep = Game.creeps.John;
+        const room = Game.rooms[startPosition.roomName];
 
-        let goals = _.map(creep.room.find(FIND_SOURCES), function (source)
+        const structures = room.find(FIND_STRUCTURES);
+        const roads = structures.filter(t => t.structureType === STRUCTURE_ROAD);
+        const nonWalkable = structures.filter(t => !this.isEnterable(t.structureType));
+
+
+        const partCount = body.length;
+        const moveParts = body.filter((t) => t.type === MOVE).length;
+        const carryParts = body.filter((t) => t.type === CARRY).length;
+        const emptyCarryParts = full ? 0 : carryParts;
+        const W = partCount - moveParts - emptyCarryParts;
+
+        /*
+            t = ceil(K * W / M)
+                Where:
+                    t = time (game ticks)
+                    K = terrain factor (0.5x for road, 1x for plain, 5x for swamp)
+                    W = creep weight (Number of body parts, excluding MOVE and empty CARRY parts)
+                    M = number of MOVE parts
+        */
+        const callback = (roomName: string) =>
         {
-            // We can't actually walk on sources-- set `range` to 1
-            // so we path next to it.
-            return { pos: source.pos, range: 1 };
-        });
-
-        var callback = function (roomName: string)
-        {
-
-            let room = Game.rooms[roomName];
-            // In this example `room` will always exist, but since
-            // PathFinder supports searches which span multiple rooms
-            // you should be careful!
-            if (!room) return;
-            let costs = new PathFinder.CostMatrix;
-
-            room.find(FIND_STRUCTURES).forEach(function (struct)
+            if (roomName !== startPosition.roomName)
             {
-                if (struct.structureType === STRUCTURE_ROAD)
-                {
-                    // Favor roads over plain tiles
-                    costs.set(struct.pos.x, struct.pos.y, 1);
-                } else if (struct.structureType !== STRUCTURE_CONTAINER &&
-                    (struct.structureType !== STRUCTURE_RAMPART ||
-                        !struct.my))
-                {
-                    // Can't walk through non-walkable buildings
-                    costs.set(struct.pos.x, struct.pos.y, 0xff);
-                }
+                return false;
+            }
+            const costs = new PathFinder.CostMatrix;
+
+            nonWalkable.forEach(struct =>
+            {
+                costs.set(struct.pos.x, struct.pos.y, 255); // Can't walk through non-walkable buildings
             });
 
-            // Avoid creeps in the room
-            room.find(FIND_CREEPS).forEach(function (creep)
+            roads.forEach(struct =>
             {
-                costs.set(creep.pos.x, creep.pos.y, 0xff);
+                costs.set(struct.pos.x, struct.pos.y, Math.ceil(0.5 * W / moveParts));
             });
 
             return costs;
         };
-        let ret = PathFinder.search(
-            creep.pos, goals, {
 
+        const ret = PathFinder.search(
+            startPosition, goals, {
+                swampCost: Math.ceil(5 * W / moveParts),
+                plainCost: Math.ceil(1 * W / moveParts),
+                roomCallback: callback
             });
 
-
-        let pos = ret.path[0];
-        creep.move(creep.pos.getDirectionTo(pos));
-
+        return ret;
     }
 }
