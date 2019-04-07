@@ -169,6 +169,8 @@ The new spawan implementation should work more dynamicly and efficent.
     > * to let the room be able to react on atackers
   - static creeps (like upgraders, miners) should be spawned in time, so that the new creep is on his place, when the old dies.
 
+
+
 ### Building Defense (Walls / Rampage) around the spawn place to create a bunker around the spawn
 a simple aproach:
 1. OutPathes -> take pathes from spawn to ever open room entry field
